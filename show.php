@@ -53,7 +53,7 @@
           <thead>
             <tr>
               <th><div class="text-center">名前</div></th>
-              <th><div class="text-center"></div></th>
+              <th><div class="text-center">操作</div></th>
             </tr>
           </thead>
           <tbody>
