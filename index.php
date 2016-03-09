@@ -6,6 +6,36 @@
     $dbh = new PDO(PDO_DSN,DB_USERNAME,DB_PASSWORD);
     $dbh->query('SET NAMES utf8');
 
+    $sql = 'SELECT * FROM areas';
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+
+    // 取得データを格納するための配列を用意
+    $areas = array();
+
+    while(1) {
+        // データを取得
+        $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($rec == false) {
+            break;
+        }
+
+        // データを用意しておいた配列に格納
+        $areas[] = $rec;
+    }
+
+    // var_dump($areas);
+    // var_dump($areas[0]);
+    // echo '<br>';
+    // var_dump($areas[0]['area_name']);
+
+    // foreach文の一回目の繰り返しの時
+    // $areas[0] == $area
+    // foreach ($areas as $area) {
+    //     echo $area['area_name'];
+    //     echo '<br>';
+    // }
+
  ?>
 
 
@@ -38,27 +68,7 @@
      <![endif]-->
    </head>
    <body>
-   <nav class="navbar navbar-default navbar-fixed-top">
-       <div class="container">
-           <!-- Brand and toggle get grouped for better mobile display -->
-           <div class="navbar-header page-scroll">
-               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                   <span class="sr-only">Toggle navigation</span>
-                   <span class="icon-bar"></span>
-                   <span class="icon-bar"></span>
-                   <span class="icon-bar"></span>
-               </button>
-               <a class="navbar-brand" href="index.html"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
-           </div>
-           <!-- Collect the nav links, forms, and other content for toggling -->
-           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-               <ul class="nav navbar-nav navbar-right">
-               </ul>
-           </div>
-           <!-- /.navbar-collapse -->
-       </div>
-       <!-- /.container-fluid -->
-   </nav>
+
 
    <div class="container">
      <div class="row">
@@ -74,31 +84,13 @@
            </thead>
            <tbody>
              <!-- id, 県名を表示 -->
-             <tr>
-               <td><div class="text-center">1</div></td>
-               <td><div class="text-center"><a href="show.html">北海道</a></div></td>
-               <td><div class="text-center">3</div></td>
-             </tr>
-             <tr>
-               <td><div class="text-center">2</div></td>
-               <td><div class="text-center"><a href="show.html">青森</a></div></td>
-               <td><div class="text-center">7</div></td>
-             </tr>
-             <tr>
-               <td><div class="text-center">3</div></td>
-               <td><div class="text-center"><a href="show.html">岩手</a></div></td>
-               <td><div class="text-center">2</div></td>
-             </tr>
-             <tr>
-               <td><div class="text-center">4</div></td>
-               <td><div class="text-center"><a href="show.html">宮城</a></div></td>
-               <td><div class="text-center">6</div></td>
-             </tr>
-             <tr>
-               <td><div class="text-center">5</div></td>
-               <td><div class="text-center"><a href="show.html">秋田</a></div></td>
-               <td><div class="text-center">8</div></td>
-             </tr>
+             <?php foreach ($areas as $area) { ?>
+                 <tr>
+                   <td><div class="text-center"><?php echo $area['area_id']; ?></div></td>
+                   <td><div class="text-center"><a href="show.php?area_id=<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></a></div></td>
+                   <td><div class="text-center">3</div></td>
+                 </tr>
+             <?php } ?>
            </tbody>
          </table>
        </div>
