@@ -7,6 +7,7 @@
     $dbh = new PDO(PDO_DSN,DB_USERNAME,DB_PASSWORD);
     $dbh->query('SET NAMES utf8');
 
+    // 都道府県名を表示するためのSQL文
     $sql = sprintf('SELECT * FROM areas WHERE area_id=%s', $_GET['area_id']);
     // var_dump($_GET['area_id']); ← var_dumpで型の判定ができる
     
@@ -14,7 +15,48 @@
     $stmt->execute();
 
     $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $area_name = $rec['area_name'];
+
     // var_dump($rec);
+
+    // 友達リストを表示するためのSQL文
+    $sql = sprintf("SELECT * FROM `friends` WHERE  `area_id` = %s", $_GET['area_id']);
+
+    // SQL文の実行
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+
+    // 取得データ格納用Array
+    $friends = array();
+
+    // 男女カウント用変数
+    $male = 0;
+    $female = 0;
+
+    while(1){
+      // データ取得
+      $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if ($rec == false){
+        //データ取得の末尾まで到達したので繰り返しの処理を終了する
+        break;
+      }
+
+      //データ格納
+      $friends[] = $rec;
+
+      //男女の人数を計算
+      if ($rec['gender'] == 1){
+        $male++;
+      }else if ($rec['gender'] == 2){
+        $female++;
+      }
+    }
+
+    //var_dump($friends);
+    //var_dump($male);
+    //var_dump($female);
 ?>
 
 <!DOCTYPE html>
@@ -47,8 +89,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
-      <legend><?php echo $rec['area_name']; ?>の友達</legend>
-      <div class="well">男性：2名　女性：1名</div>
+      <legend><?php echo $area_name; ?>の友達</legend>
+      <div class="well">男性：<?php echo $male; ?>名　女性：<?php echo $female; ?>名</div>
         <table class="table table-striped table-hover table-condensed">
           <thead>
             <tr>
@@ -58,37 +100,23 @@
           </thead>
           <tbody>
             <!-- 友達の名前を表示 -->
-            <tr>
-              <td><div class="text-center">山田　太郎</div></td>
-              <td>
-                <div class="text-center">
-                  <a href="edit.html"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td><div class="text-center">小林　花子</div></td>
-              <td>
-                <div class="text-center">
-                  <a href="edit.html"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td><div class="text-center">佐藤　健</div></td>
-              <td>
-                <div class="text-center">
-                  <a href="edit.html"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
-                </div>
-              </td>
-            </tr>
+            <?php foreach ($friends as $friend) { ?>
+              <tr>
+                <td><div class="text-center"><?php echo $friend['friend_name']; ?></div></td>
+                <td>
+                  <div class="text-center">
+                    <a href="edit.html"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
+                  </div>
+                </td>
+              </tr>
+            <?php 
+              }
+            ?>
           </tbody>
         </table>
 
-        <input type="button" class="btn btn-default" value="新規作成" onClick="location.href='new.html'">
+        <input type="button" class="btn btn-default" value="新規作成" onClick="location.href='new.php'">
       </div>
     </div>
   </div>
