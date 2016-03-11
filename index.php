@@ -6,7 +6,13 @@
     $dbh = new PDO(PDO_DSN,DB_USERNAME,DB_PASSWORD);
     $dbh->query('SET NAMES utf8');
 
-    $sql = 'SELECT * FROM areas';
+    $sql = 'SELECT `areas`.`area_id`, `areas`.`area_name`, ';
+    $sql .= ' COUNT(`friends`.`friend_id`) AS friends_cnt';
+    $sql .= ' FROM `areas` LEFT JOIN `friends` ';
+    $sql .= ' ON `areas`.`area_id` = `friends`.`area_id` ';
+    $sql .= ' GROUP BY `areas`.`area_id`';
+
+    var_dump($sql);
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 
@@ -88,7 +94,7 @@
                  <tr>
                    <td><div class="text-center"><?php echo $area['area_id']; ?></div></td>
                    <td><div class="text-center"><a href="show.php?area_id=<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></a></div></td>
-                   <td><div class="text-center">3</div></td>
+                   <td><div class="text-center"><?php echo $area['friends_cnt']; ?></div></td>
                  </tr>
              <?php } ?>
            </tbody>

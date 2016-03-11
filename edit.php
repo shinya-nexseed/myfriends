@@ -28,24 +28,31 @@
       $areas[]=$rec;
     }
 
+    //編集する友達データを取得
+    $sql = sprintf("SELECT * FROM `friends` WHERE `friend_id` = %s",$_GET['friend_id']);
 
-    //POST 送信された情報を取得
-    // POST送信されたら、友達データを追加
-    if (isset($_POST) && !empty($_POST)){
-      var_dump($_POST['name']);
-      //INSERT文作成
-      $sql = sprintf("INSERT INTO `myfriends`.`friends` (`friend_id`, `friend_name`, `area_id`, `gender`, `age`, `created`) VALUES (NULL, '%s', '%s', '%s', '%s', now());",$_POST['name'],$_POST['area_id'],$_POST['gender'],$_POST['age']);
+    // SQL実行
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
 
-      //SQL実行
-      $stmt = $dbh->prepare($sql);
-      $stmt->execute();
+    $friend = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    }
+    // HW：ここをUpdate文の実行に変更しましょう
+    // //POST 送信された情報を取得
+    // // POST送信されたら、友達データを追加
+    // if (isset($_POST) && !empty($_POST)){
+    //   var_dump($_POST['name']);
+    //   //INSERT文作成
+    //   $sql = sprintf("INSERT INTO `myfriends`.`friends` (`friend_id`, `friend_name`, `area_id`, `gender`, `age`, `created`) VALUES (NULL, '%s', '%s', '%s', '%s', now());",$_POST['name'],$_POST['area_id'],$_POST['gender'],$_POST['age']);
+
+    //   //SQL実行
+    //   $stmt = $dbh->prepare($sql);
+    //   $stmt->execute();
+
+    // }
     
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -95,13 +102,13 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
-        <legend>友達の登録</legend>
+        <legend>友達の編集</legend>
         <form method="post" action="" class="form-horizontal" role="form">
             <!-- 名前 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
               <div class="col-sm-10">
-                <input type="text" name="name" class="form-control" placeholder="例：山田　太郎">
+                <input type="text" name="name" class="form-control" placeholder="山田　太郎" value="<?php echo $friend['friend_name']; ?>">
               </div>
             </div>
             <!-- 出身 -->
@@ -112,7 +119,12 @@
                   <option value="0">出身地を選択</option>
                   <?php
                     foreach ($areas as $area) { ?>
+                      <?php if ($area['area_id'] == $friend['area_id']) { ?>
+                      <option value="<?php echo $area['area_id']; ?>" selected><?php echo $area['area_name']; ?></option>
+                      <?php }else{ ?>
+
                       <option value="<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?></option>
+                      <?php } ?>
                   <?php } ?>
                 </select>
               </div>
@@ -121,10 +133,17 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">性別</label>
               <div class="col-sm-10">
+                <?php var_dump($friend['gender']);?>
                 <select class="form-control" name="gender">
                   <option value="0">性別を選択</option>
-                  <option value="1">男性</option>
+                  <?php
+                  if($friend['gender'] == 1){ ?>
+                  <option value="1" selected>男性</option>
                   <option value="2">女性</option>
+                  <?php }else{ ?>
+                  <option value="1">男性</option>
+                  <option value="2" selected>女性</option>
+                  <?php } ?>
                 </select>
               </div>
             </div>
@@ -132,11 +151,11 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">年齢</label>
               <div class="col-sm-10">
-                <input type="text" name="age" class="form-control" placeholder="例：27">
+                <input type="text" name="age" class="form-control" placeholder="例：27" value="<?php echo $friend['age']; ?>">
               </div>
             </div>
 
-          <input type="submit" class="btn btn-default" value="登録">
+          <input type="submit" class="btn btn-default" value="更新">
         </form>
       </div>
 
