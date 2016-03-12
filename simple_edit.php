@@ -102,7 +102,6 @@
             <div>
               <label>性別</label>
               <div>
-                <?php var_dump($friend['gender']);?>
                 <select class="form-control" name="gender">
                   <option value="0">性別を選択</option>
                   <?php
