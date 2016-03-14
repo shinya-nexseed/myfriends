@@ -7,7 +7,17 @@
     $dbh = new PDO(PDO_DSN,DB_USERNAME,DB_PASSWORD);
     $dbh->query('SET NAMES utf8');
 
+    // 削除処理
+    if (isset($_GET['action']) && !empty($_GET['action'])) {
+      if ($_GET['action'] == 'delete') {
+        $sql = 'DELETE FROM `friends` WHERE `friend_id` = ' . $_GET['friend_id'];
+        // SQL実行
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute();
 
+        header('Location: index.php');
+      }
+    }
 
     // 都道府県名を表示するためのSQL文
     $sql = sprintf('SELECT * FROM areas WHERE area_id=%s', $_GET['area_id']);
@@ -83,6 +93,18 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script type="text/javascript">
+    function destroy(friend_id){
+      if(confirm('削除しますか？')){
+        // OKボタンをおした時
+        location.href = 'show_answer.php?action=delete&friend_id=' + friend_id;
+        return true;
+      } else {
+        // キャンセルボタンをおした時
+        return false;
+      }
+    }
+    </script>
 
   </head>
   <body>

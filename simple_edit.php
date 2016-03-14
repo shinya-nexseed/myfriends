@@ -26,6 +26,7 @@
       }
       // データ格納
       $areas[]=$rec;
+      // 47個の都道府県データ
     }
 
     //編集する友達データを取得
@@ -38,19 +39,38 @@
     $friend = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // HW：ここをUpdate文の実行に変更しましょう
-    // //POST 送信された情報を取得
-    // // POST送信されたら、友達データを追加
-    // if (isset($_POST) && !empty($_POST)){
-    //   var_dump($_POST['name']);
-    //   //INSERT文作成
-    //   $sql = sprintf("INSERT INTO `myfriends`.`friends` (`friend_id`, `friend_name`, `area_id`, `gender`, `age`, `created`) VALUES (NULL, '%s', '%s', '%s', '%s', now());",$_POST['name'],$_POST['area_id'],$_POST['gender'],$_POST['age']);
+    //POST 送信された情報を取得
+    // POST送信されたら、友達データを追加
+    if (isset($_POST) && !empty($_POST)){
+      var_dump($_POST['name']);
+      //INSERT文作成
+      // $sql = sprintf("INSERT INTO `myfriends`.`friends` (`friend_id`, `friend_name`, `area_id`, `gender`, `age`, `created`) VALUES (NULL, '%s', '%s', '%s', '%s', now());",$_POST['name'],$_POST['area_id'],$_POST['gender'],$_POST['age']);
 
-    //   //SQL実行
-    //   $stmt = $dbh->prepare($sql);
-    //   $stmt->execute();
+      // UPDATE文をつくるときはSET句を使ったほうが理解しやすい
+      // $sql = sprintf('UPDATE `テーブル名` SET 更新したいデータ WHERE 更新したいデータのレコード条件');
+      $sql = sprintf('UPDATE `friends` SET `friend_name`="%s", `area_id`=%s, `gender`=%s, `age`=%s WHERE `friend_id`=%s',
+            $_POST['name'],
+            $_POST['area_id'],
+            $_POST['gender'],
+            $_POST['age'],
+            $_GET['friend_id']
+        );
 
-    // }
+      //SQL実行
+      $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+
+      // show.phpに遷移する
+      // 遷移するための関数 ⇒ header()
+      // header('Location: 遷移したいページのパス');
+      // header('Location: index.php');
+      header('Location: show.php?area_id=' . $_POST['area_id']);
+      // この行以下のコードの処理を停止する
+      // exit('これ以下の処理を終了します。');
+      exit();
+    }
     
+    $dbh = null;
 
 ?>
 <!DOCTYPE html>
