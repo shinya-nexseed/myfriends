@@ -40,8 +40,11 @@
       $stmt = $dbh->prepare($sql);
       $stmt->execute();
 
+      header('Location: show.php?area_id=' . $_POST['area_id']);
+      exit();
     }
     
+    $dbh = null;
 
 ?>
 
