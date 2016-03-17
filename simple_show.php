@@ -140,20 +140,27 @@
       <div>
         男性：<?php echo $male; ?>名　女性：<?php echo $female; ?>名<br>
         <?php
-            if ($avgAge[0]['gender'] == 2) {
-                echo '男性平均:--歳　';
-                echo '女性平均:' . $avgAge[0]['avgAge'] . '歳';
-
-                
-            } else if (empty($avgAge[1]['gender'])) {
-                echo '男性平均:' . $avgAge[0]['avgAge'] . '歳　';
-                echo '女性平均:--歳';
+        if (empty($avgAge)) { // 男女がいない場合
+            echo '男性平均:--歳　';
+            echo '女性平均:--歳';
 
 
-            } else {
-                echo '男性平均:' . $avgAge[0]['avgAge'] . '歳　';
-                echo '女性平均:' . $avgAge[1]['avgAge'] . '歳';
-            }
+        } else if (!empty($avgAge[0]['gender']) && !empty($avgAge[1]['gender'])) { // 男女両方
+            echo '男性平均:' . $avgAge[0]['avgAge'] . '歳　';
+            echo '女性平均:' . $avgAge[1]['avgAge'] . '歳';
+
+            
+        } else if ($avgAge[0]['gender'] == 2) { // 女性友達のみ
+            echo '男性平均:--歳　';
+            echo '女性平均:' . $avgAge[0]['avgAge'] . '歳';
+
+
+        } else { // それ以外 男性友達のみ
+           echo '男性平均:' . $avgAge[0]['avgAge'] . '歳　';
+           echo '女性平均:--歳';
+
+
+        }
         ?>
       </div>
 
